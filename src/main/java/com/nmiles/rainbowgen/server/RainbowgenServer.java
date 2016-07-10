@@ -15,7 +15,7 @@ public class RainbowgenServer {
 
 	public static void main(String[] args) {
 		int port = Integer.parseInt(System.getenv("PORT"));
-		HttpServer server = HttpServer.createSimpleServer(null, "0.0.0.0", port);
+		HttpServer server = HttpServer.createSimpleServer("static/", "0.0.0.0", port);
 		server.getServerConfiguration().addHttpHandler(new HttpHandler() {
 			public void service(Request request, Response response) throws Exception {
 				final SimpleDateFormat format = new SimpleDateFormat(
@@ -28,7 +28,7 @@ public class RainbowgenServer {
 			}
 		}, "/time");
 		
-		server.getServerConfiguration().addHttpHandler(new StaticHttpHandler("static/"), "/");
+		//server.getServerConfiguration().addHttpHandler(new StaticHttpHandler("static/"), "/");
 		try {
 			server.start();
 			while (true){
