@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RainbowGen</title>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet"
+	href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script
+	src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+<style>
+#myCanvas {
+	width: 100%;
+	height: 100%;
+}
+
+body, html {
+	margin: 0px;
+	height: 100%;
+	width: 100%;
+	overflow: hidden;
+}
+
+body {
+	display: table;
+}
+
+#header, #canvasWrapper {
+	width: 100%;
+	display: table-row;
+}
+
+#header {
+	background: #DDDDDD;
+}
+
+#controlsWrapper {
+	padding: 5px 5px 5px 5px;
+	display: table;
+	margin: 0 auto;
+}
+
+#canvasWrapper {
+	background: #FFFFFF;
+	height: 100%;
+}
+
+#sliderWrapper {
+	float: left;
+	margin-right: 10px;
+}
+
+#buttonWrapper {
+	float: right;
+}
+</style>
+
+<script>
+	var ppf = 1000;
+	var x = 0;
+	var y = 0;
+	var width;
+	var height;
+	var pauseInd = 1;
+
+	var c = null;
+	var context = null;
+	function begin() {
+		c = document.getElementById("myCanvas");
+		width = c.offsetWidth;
+		height = c.offsetHeight;
+		c.setAttribute("width", width);
+		c.setAttribute("height", height);
+		context = c.getContext("2d");
+		context.fillStyle = "#FF0000";
+		pauseInd = 0;
+		step(performance.now());
+	}
+
+	var start = null;
+	function step(timestamp) {
+		if (pauseInd == 1) {
+			return;
+		}
+		for (i = 0; i < ppf; i++) {
+			if (x >= width) {
+				x = 0;
+				y++;
+			}
+			if (y >= height) {
+				return;
+			}
+			if (y >= width) {
+				y = 0;
+			}
+			context.fillRect(x, y, 1, 1);
+			x++;
+		}
+		window.requestAnimationFrame(step);
+	}
+
+	function pause() {
+		pauseInd = 1;
+	}
+
+	function reset() {
+		pause();
+		window.requestAnimationFrame(resetCont);
+	}
+
+	function resetCont() {
+		c = document.getElementById("myCanvas");
+		context = c.getContext("2d");
+		context.fillStyle = "#FFFFFF";
+		context.fillRect(0, 0, width, height);
+		x = 0;
+		y = 0;
+	}
+</script>
+</head>
+<body>
+	<div id="header">
+		<div id="controlsWrapper">
+			<div id="buttonWrapper" class="btn-group">
+				<button type="button" class="btn btn-default" onclick="begin()">
+					<span class="glyphicon glyphicon-play"></span>
+				</button>
+				<button type="button" class="btn btn-default" onclick="pause()">
+					<span class="glyphicon glyphicon-pause"></span>
+				</button>
+				<button type="button" class="btn btn-default" onclick="reset()">
+					<span class="glyphicon glyphicon-repeat"></span>
+				</button>
+			</div>
+		</div>
+	</div>
+	<div id="canvasWrapper">
+		<canvas id="myCanvas"></canvas>
+	</div>
+</body>
+</html>

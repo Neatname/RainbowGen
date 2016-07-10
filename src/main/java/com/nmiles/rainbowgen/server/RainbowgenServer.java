@@ -8,11 +8,13 @@ import org.glassfish.grizzly.http.server.HttpHandler;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.Request;
 import org.glassfish.grizzly.http.server.Response;
+import org.glassfish.grizzly.http.server.StaticHttpHandler;
 
 public class RainbowgenServer {
 
 	public static void main(String[] args) {
-		HttpServer server = HttpServer.createSimpleServer();
+		int port = Integer.parseInt(System.getenv("PORT"));
+		HttpServer server = HttpServer.createSimpleServer(null, "0.0.0.0", port);
 		server.getServerConfiguration().addHttpHandler(new HttpHandler() {
 			public void service(Request request, Response response) throws Exception {
 				final SimpleDateFormat format = new SimpleDateFormat(
@@ -24,6 +26,8 @@ public class RainbowgenServer {
 				response.getWriter().write(date);
 			}
 		}, "/time");
+		
+		server.getServerConfiguration().addHttpHandler(new StaticHttpHandler("static/"), "/");
 		try {
 			server.start();
 			System.out.println("Press any key to stop the server...");
