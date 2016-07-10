@@ -3,6 +3,7 @@ package com.nmiles.rainbowgen.server;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import org.glassfish.grizzly.http.server.HttpHandler;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -30,8 +31,11 @@ public class RainbowgenServer {
 		server.getServerConfiguration().addHttpHandler(new StaticHttpHandler("static/"), "/");
 		try {
 			server.start();
-			System.out.println("Press any key to stop the server...");
-			System.in.read();
+			while (true){
+				TimeUnit.SECONDS.sleep(10);
+			}
+			//System.out.println("Press any key to stop the server...");
+			//System.in.read();
 		} catch (Exception e) {
 			System.err.println(e);
 		}
