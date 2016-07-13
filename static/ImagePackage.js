@@ -34,6 +34,7 @@ function getImage() {
 	chunkCounter = 0;
 	chunkIndex = 0;
 	downloadElement = document.getElementById("downloadP");
+	downloadElement.innerHTML = "0%";
 	paintCanvasBlack();
 	connect();
 }
