@@ -30,6 +30,10 @@ public abstract class RandomImage {
     
     protected BufferedImage image;
     
+    private int totalPixels;
+    
+    protected int pixelsFilled;
+    
     //protected double colorScalar;
     
     protected List<DirectionalPixel> edgeList;
@@ -55,6 +59,8 @@ public abstract class RandomImage {
         setupColorTracker();
         edgeList = new LinkedList<DirectionalPixel>();
         record = new ImageRecord(width * height);
+        pixelsFilled = 0;
+        totalPixels = width * height;
     }
     
     public BufferedImage getImage(){
@@ -250,5 +256,9 @@ public abstract class RandomImage {
     
     public ImageRecord getRecord(){
     	return record;
+    }
+    
+    public int percentDone(){
+    	return pixelsFilled * 100 / totalPixels;
     }
 }

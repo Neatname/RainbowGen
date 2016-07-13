@@ -9,6 +9,7 @@ var gotWholeImage = false;
 
 var websocket;
 var uri;
+var downloadProgress;
 if (window.location.hostname === "localhost"){
 	uri = "ws://localhost:8080/imagesocket";
 } else {
@@ -32,6 +33,7 @@ function getImage() {
 	playing = false;
 	chunkCounter = 0;
 	chunkIndex = 0;
+	downloadElement = document.getElementById("downloadP");
 	paintCanvasBlack();
 	connect();
 }
@@ -59,10 +61,16 @@ function connect(){
 	}
 
 	websocket.onmessage = function(event) {
-		var data = event.data;
-		switch (data){
+		var data = JSON.parse(event.data);
+		var type = data.type;
+		switch (type){
+			case "progress":
+				console.log("Got percent message: " + data.percent);
+				downloadElement.innerHTML = data.percent;
+				break;
 			case "generated":
 				console.log("Got generated message");
+				downloadElement.innerHTML = "";
 				break;
 			case "done":
 				console.log("Got done message. Closing...");
@@ -70,8 +78,8 @@ function connect(){
 				websocket.close();
 				break;
 			default:
-				console.log("Got a chunk");
-				addChunk(data);
+				//console.log("Got a chunk");
+				addChunk(data.chunk);
 		}
 	}
 }
@@ -80,7 +88,7 @@ var chunks = [];
 
 function addChunk(data){
 	chunks.push(data);
-	console.log("pushed chunk");
+	//console.log("pushed chunk");
 	play();
 }
 

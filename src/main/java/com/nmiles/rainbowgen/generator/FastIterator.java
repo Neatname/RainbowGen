@@ -46,6 +46,7 @@ public class FastIterator extends RandomImage {
             int colorToAdd = colorPossibilities.remove(rand.nextInt(colorPossibilities.size()));
             colorTracker[(int)((colorToAdd >> 16) & 0xFF)][(int)((colorToAdd >> 8) & 0xFF)][(int)(colorToAdd & 0xFF)] = 0;
             edgeIterator.add(pixelToAdd);
+            pixelsFilled++;
             if (rand.nextInt(2) == 0){
                 edgeIterator.previous();
             }
