@@ -30,6 +30,8 @@ function getImage() {
 	chunks = [];
 	pauseInd = false;
 	playing = false;
+	chunkCounter = 0;
+	chunkIndex = 0;
 	paintCanvasBlack();
 	connect();
 }
