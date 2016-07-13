@@ -42,9 +42,9 @@ public class FastIterator extends RandomImage {
         List<Integer> colorPossibilities = getClosestColors(colorToMatch);
         
         while (nextPossibilities.size() != 0 && colorPossibilities.size() != 0){
-            DirectionalPixel pixelToAdd = nextPossibilities.remove(nextPossibilities.size() - 1);
-            int colorToAdd = colorPossibilities.get(rand.nextInt(colorPossibilities.size()));
-            colorTracker[(int)(((colorToAdd >> 16) & 0xFF) / colorScalar)][(int)(((colorToAdd >> 8) & 0xFF) / colorScalar)][(int)((colorToAdd & 0xFF) / colorScalar)] = 0;
+            DirectionalPixel pixelToAdd = nextPossibilities.remove(rand.nextInt(nextPossibilities.size()));
+            int colorToAdd = colorPossibilities.remove(rand.nextInt(colorPossibilities.size()));
+            colorTracker[(int)((colorToAdd >> 16) & 0xFF)][(int)((colorToAdd >> 8) & 0xFF)][(int)(colorToAdd & 0xFF)] = 0;
             edgeIterator.add(pixelToAdd);
             if (rand.nextInt(2) == 0){
                 edgeIterator.previous();

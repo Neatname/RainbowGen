@@ -53,9 +53,11 @@ public class ImageGeneratorApplication extends WebSocketApplication {
 		try {
 			websocket.sendPing(PING_DATA);
 			long lastPing = System.currentTimeMillis();
+			//System.out.println("Building " + width + " " + height + " " + individualPercent);
 			image = new FastIterator(width, height, individualPercent);
 			while (!image.isFinished()){
 				if (System.currentTimeMillis() - lastPing > PING_INTERVAL * MILLIS_IN_A_SECOND){
+					//System.out.println("pinging...");
 					websocket.sendPing(PING_DATA);
 					lastPing = System.currentTimeMillis();
 				}
@@ -63,6 +65,7 @@ public class ImageGeneratorApplication extends WebSocketApplication {
 			}
 			websocket.send("generated");
 		} catch (Exception e){
+			System.out.print(e.getMessage());
 			websocket.close(2, "Something went wrong while generating your image :(");
 			return;
 		}

@@ -16,35 +16,44 @@ public class ImageRecord {
 	
 	private static final int BOTTOM_Y_MASK = 0x000000FF;
 	
+	private static final int ALPHA_MASK = 0x00FFFFFF;
+	
 	private static final int CHUNK_SIZE = 5000;
 	
-	private static final int BYTES_PER_CHUNK = 6 * CHUNK_SIZE;
+	private static final int BYTES_PER_CHUNK = 12 * CHUNK_SIZE;
 	
-	private byte[] currentChunk;
+	//private byte[] currentChunk;
 	
-	private List<byte[]> chunks;
+	private StringBuilder sb;
+	
+	//private List<byte[]> chunks;
+	
+	private List<String> chunks;
 	
 	private boolean finished = false;
 	
-	private int chunkPointer;
+	//private int chunkPointer;
 	
 	public ImageRecord(int numPixels){
-		currentChunk = new byte[BYTES_PER_CHUNK];
+		//currentChunk = new byte[BYTES_PER_CHUNK];
 		chunks = new ArrayList<>(numPixels / CHUNK_SIZE + 1);
-		chunkPointer = 0;
+		sb = new StringBuilder(BYTES_PER_CHUNK);
+		//chunkPointer = 0;
 	}
 	
 	//OLD
-	/*public void addPixel(int x, int y, int color){
+	public void addPixel(int x, int y, int color){
 		sb.append(String.format("%03X%03X", x, y));
 		sb.append(String.format("%06X", color & ALPHA_MASK));
+		//System.out.println(String.format("%06X", color & ALPHA_MASK));
+		//System.out.println(color);
 		if (sb.length() == BYTES_PER_CHUNK){
 			chunks.add(sb.toString());
 			sb = new StringBuilder(BYTES_PER_CHUNK);
 		}
-	}*/
+	}
 	
-	public void addPixel(int x, int y, int color){
+	/*public void addPixel(int x, int y, int color){
 		// chunkPointer points to the first byte of this pixel's location
 		// bits 11-4 of go here
 		currentChunk[chunkPointer] = (byte) (x >> 4);
@@ -76,30 +85,30 @@ public class ImageRecord {
 			currentChunk = new byte[BYTES_PER_CHUNK];
 			chunkPointer = 0;
 		}
-	}
+	}*/
 	
 	//OLD
-	/*public void makeFinal(){
+	public void makeFinal(){
 		if (sb.length() != 0){
 			chunks.add(sb.toString());
 			sb = null;
 			finished = true;
 		}
-	}*/
+	}
 	
-	public void makeFinal(){
+	/*public void makeFinal(){
 		if (chunkPointer != 0){
 			chunks.add(Arrays.copyOf(currentChunk, chunkPointer));
 			currentChunk = null;
 			finished = true;
 		}
-	}
+	}*/
 	
 	public int getNumChunks(){
 		return chunks.size();
 	}
 	
-	public byte[] getChunk(int i){
+	public String getChunk(int i){
 		if (finished){
 			return chunks.get(i);
 		} else {

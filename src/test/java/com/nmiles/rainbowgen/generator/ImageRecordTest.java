@@ -8,7 +8,7 @@ import org.junit.Test;
 
 public class ImageRecordTest {
 	
-	@Test
+	/*@Test
 	public void testImageRecord(){
 		ImageRecord ir = new ImageRecord(1);
 		int r = 255;
@@ -21,5 +21,5 @@ public class ImageRecordTest {
 		byte[] expected = {0, 80, 50, (byte) 255, 100, 1};
 		byte[] actual = ir.getChunk(0);
 		assertTrue(Arrays.equals(expected, actual));
-	}
+	}*/
 }
