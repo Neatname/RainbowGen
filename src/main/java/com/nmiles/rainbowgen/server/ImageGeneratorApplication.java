@@ -79,7 +79,7 @@ public class ImageGeneratorApplication extends WebSocketApplication {
 		}
 		
 		websocket.send("done");
-		websocket.close();
+		//websocket.close();
 	}
 	
 }

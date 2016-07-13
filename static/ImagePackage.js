@@ -1,8 +1,6 @@
 var width;
 var height;
 var pauseInd = true;
-var pixelCount = 0;
-var buffered = false;
 
 var c = null;
 var context = null;
@@ -17,13 +15,22 @@ if (window.location.hostname === "localhost"){
 	uri = "wss://rainbowgen-nmiles.herokuapp.com/imagesocket";
 }
 
-function getImage() {
+function paintCanvasBlack(){
 	c = document.getElementById("myCanvas");
+	context = c.getContext("2d");
+	context.fillStyle = "#000000";
 	width = c.offsetWidth;
 	height = c.offsetHeight;
 	c.setAttribute("width", width);
 	c.setAttribute("height", height);
-	context = c.getContext("2d");
+	context.fillRect(0, 0, width, height);
+}
+
+function getImage() {
+	chunks = [];
+	pauseInd = false;
+	playing = false;
+	paintCanvasBlack();
 	connect();
 }
 
@@ -53,14 +60,15 @@ function connect(){
 		var data = event.data;
 		switch (data){
 			case "generated":
-				//console.log("Got generated message");
+				console.log("Got generated message");
 				break;
 			case "done":
-				//console.log("Got done message");
+				console.log("Got done message. Closing...");
 				gotWholeImage = true;
+				websocket.close();
 				break;
 			default:
-				//console.log("Got a chunk");
+				console.log("Got a chunk");
 				addChunk(data);
 		}
 	}
@@ -70,11 +78,8 @@ var chunks = [];
 
 function addChunk(data){
 	chunks.push(data);
-	buffered = true;
-	if (!playing){
-		playing = true;
-		step(performance.now());
-	}
+	console.log("pushed chunk");
+	play();
 }
 
 var playing = false;
@@ -95,7 +100,7 @@ var x;
 var y;
 var color;
 function step(timestamp) {
-	if (pauseInd || !buffered) {
+	if (pauseInd) {
 		playing = false;
 		return;
 	}
@@ -133,7 +138,7 @@ function reset() {
 function resetCont() {
 	c = document.getElementById("myCanvas");
 	context = c.getContext("2d");
-	context.fillStyle = "#FFFFFF";
+	context.fillStyle = "#000000";
 	context.fillRect(0, 0, width, height);
 	chunkCounter = 0;
 	chunkIndex = 0;
