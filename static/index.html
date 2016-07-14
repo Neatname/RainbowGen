@@ -8,15 +8,6 @@
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 
-<!-- jQuery library -->
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-
-<!-- Latest compiled JavaScript -->
-<script
-	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-<!-- My rendering script -->
-<script src="ImagePackage.js"></script>
 <!-- My stylesheet -->
 <link rel="stylesheet" type="text/css" href="style.css">
 </head>
@@ -25,11 +16,11 @@
 	<div id="header">
 		<div id="controlsWrapper">
 			<div id="downloadWrapper">
-				<p id="downloadP"></p>
+				<img id="downloadImg" src="loader.gif"></p>
 			</div>
 			<div id="newWrapper">
 				<button type="button" class="btn btn-primary" onclick="getImage()">
-					New Image
+					New
 				</button>
 			</div>
 			<div id="buttonWrapper" class="btn-group">
@@ -48,8 +39,13 @@
 	<div id="canvasWrapper">
 		<canvas id="myCanvas"></canvas>
 	</div>
-	<script>
-		paintCanvasBlack();
-	</script>
+
+	<!-- Scripts -->
+	<!-- jQuery library -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<!-- Bootstrap JS -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+	<!-- My rendering script -->
+	<script src="ImagePackage.js"></script>
 </body>
 </html>

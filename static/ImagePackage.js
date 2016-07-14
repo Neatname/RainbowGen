@@ -7,9 +7,10 @@ var context = null;
 
 var gotWholeImage = false;
 
-var websocket;
+var websocket = null;
 var uri;
-var downloadProgress;
+downloadElement = document.getElementById("downloadWrapper");
+
 if (window.location.hostname === "localhost"){
 	uri = "ws://localhost:8080/imagesocket";
 } else {
@@ -28,13 +29,16 @@ function paintCanvasBlack(){
 }
 
 function getImage() {
+	if (websocket !== null && websocket.readyState == 1){
+		gotWholeImage = true;
+		websocket.close();
+	}
+	downloadElement.style.visibility = 'visible';
 	chunks = [];
 	pauseInd = false;
 	playing = false;
 	chunkCounter = 0;
 	chunkIndex = 0;
-	downloadElement = document.getElementById("downloadP");
-	downloadElement.innerHTML = "0%";
 	paintCanvasBlack();
 	connect();
 }
@@ -55,8 +59,9 @@ function connect(){
 
 	websocket.onclose = function() {
 		setTimeout( function(){
-				if (!gotWholeImage){
-				alert("Something went wrong, sorry :(");
+			if (!gotWholeImage){
+			downloadElement.style.visibility = 'hidden';
+			alert("Something went wrong, sorry :(");
 			}
 		}, 200);
 	}
@@ -65,22 +70,16 @@ function connect(){
 		var data = JSON.parse(event.data);
 		var type = data.type;
 		switch (type){
-			case "progress":
-				console.log("Got percent message: " + data.percent);
-				downloadElement.innerHTML = data.percent;
-				break;
-			case "generated":
-				console.log("Got generated message");
-				downloadElement.innerHTML = "";
-				break;
 			case "done":
-				console.log("Got done message. Closing...");
+				console.log("Done. Got " + chunks.length + " chunks.");
 				gotWholeImage = true;
 				websocket.close();
+				downloadElement.style.visibility = 'hidden';
 				break;
-			default:
+			case "chunk":
 				//console.log("Got a chunk");
 				addChunk(data.chunk);
+				break;
 		}
 	}
 }
@@ -154,3 +153,6 @@ function resetCont() {
 	chunkCounter = 0;
 	chunkIndex = 0;
 }
+
+paintCanvasBlack();
+document.getElementById("controlsWrapper").style.visibility = 'visible';

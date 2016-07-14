@@ -14,14 +14,9 @@ body {
    display: table;
 }
 
-#downloadP {
-   font-size: 16px;
-   font-weight: 700;
-   color: #FFFFFF;
+#downloadImg {
    padding: 0px 0px 0px 0px;
-   height: 20px;
-   line-height: 35px;
-   white-space: nowrap;
+   margin: 5px 0px 0px 0px;
 }
 
 #header, #canvasWrapper {
@@ -34,19 +29,24 @@ body {
 }
 
 #controlsWrapper {
-   padding: 5px 5px 5px 5px;
+   padding: 2px 0px 2px 0px;
    display: table;
    margin: 0 auto;
+   visibility: hidden;
 }
 
 #downloadWrapper {
    float: left;
    margin-right: 10px;
+   padding: 0px 0px 0px 0px;
+   margin: 0px 4px 0px 0px;
+   height: 35px;
+   visibility: hidden;
 }
 
 #newWrapper{
    float: left;
-   margin-right: 20px;
+   margin-right: 7px;
 }
 
 #canvasWrapper {

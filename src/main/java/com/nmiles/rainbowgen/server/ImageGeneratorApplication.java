@@ -15,8 +15,6 @@ public class ImageGeneratorApplication extends WebSocketApplication {
 	
 	private static final int MAX_PERCENT = 4096;
 	
-	private static final int PROGRESS_INTERVAL = 500;
-	
 	private static final byte[] PING_DATA = {};
 
 	@Override
@@ -48,36 +46,29 @@ public class ImageGeneratorApplication extends WebSocketApplication {
 		
 		// build image
 		RandomImage image = null;
+		ImageRecord record = null;
+		int chunksSent = 0;
 		try {
 			websocket.sendPing(PING_DATA);
-			long lastPing = System.currentTimeMillis();
 			//System.out.println("Building " + width + " " + height + " " + individualPercent);
 			image = new FastIterator(width, height, individualPercent);
+			record = image.getRecord();
 			while (!image.isFinished()){
-				if (System.currentTimeMillis() - lastPing > PROGRESS_INTERVAL){
-					//System.out.println("pinging...");
-					websocket.send("{\"type\": \"progress\", \"percent\": \"" + image.percentDone() + "%\"}");
-					lastPing = System.currentTimeMillis();
+				if (record.getNumChunks() > chunksSent){
+					websocket.send("{\"type\": \"chunk\", \"chunk\": \"" + record.getChunk(chunksSent++) + "\"}");
 				}
 				image.nextPixel();
 			}
-			websocket.send("{\"type\": \"generated\"}");
 		} catch (Exception e){
 			System.out.print(e.getMessage());
 			websocket.close(2, "Something went wrong while generating your image :(");
 			return;
 		}
-		
-		//send image in chunks
-		ImageRecord record = image.getRecord();
+
 		record.makeFinal();
-		int chunks = record.getNumChunks();
-		for (int i = 0; i < chunks; i++){
-			websocket.send("{\"type\": \"chunk\", \"chunk\": \"" + record.getChunk(i) + "\"}");
+		if (chunksSent < record.getNumChunks()){
+			websocket.send("{\"type\": \"chunk\", \"chunk\": \"" + record.getChunk(chunksSent++) + "\"}");
 		}
-		
 		websocket.send("{\"type\": \"done\"}");
-		//websocket.close();
 	}
-	
 }

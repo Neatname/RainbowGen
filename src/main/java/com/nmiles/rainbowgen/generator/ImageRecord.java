@@ -30,8 +30,6 @@ public class ImageRecord {
 	
 	private List<String> chunks;
 	
-	private boolean finished = false;
-	
 	//private int chunkPointer;
 	
 	public ImageRecord(int numPixels){
@@ -92,7 +90,6 @@ public class ImageRecord {
 		if (sb.length() != 0){
 			chunks.add(sb.toString());
 			sb = null;
-			finished = true;
 		}
 	}
 	
@@ -109,10 +106,6 @@ public class ImageRecord {
 	}
 	
 	public String getChunk(int i){
-		if (finished){
-			return chunks.get(i);
-		} else {
-			return null;
-		}
+		return chunks.get(i);
 	}
 }
