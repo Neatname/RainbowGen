@@ -61,4 +61,8 @@ body {
 
 #buttonWrapper {
    float: left;
+   visibility: hidden;
+}
+#play {
+   display: none;
 }

@@ -7,9 +7,15 @@ var context = null;
 
 var gotWholeImage = false;
 
+var doneRendering = false;
+
 var websocket = null;
 var uri;
 downloadElement = document.getElementById("downloadWrapper");
+playPauseButton = document.getElementById("playpause");
+
+playGlyph = '<span class="glyphicon glyphicon-play"></span>';
+pauseGlyph = '<span class="glyphicon glyphicon-pause"></span>';
 
 if (window.location.hostname === "localhost"){
 	uri = "ws://localhost:8080/imagesocket";
@@ -30,16 +36,19 @@ function paintCanvasBlack(){
 
 function getImage() {
 	if (websocket !== null && websocket.readyState == 1){
-		gotWholeImage = true;
 		websocket.close();
 	}
 	downloadElement.style.visibility = 'visible';
+	document.getElementById("buttonWrapper").style.visibility = "visible";
 	chunks = [];
 	pauseInd = false;
 	playing = false;
+	doneRendering = false;
 	chunkCounter = 0;
 	chunkIndex = 0;
+	gotWholeImage = false;
 	paintCanvasBlack();
+	play();
 	connect();
 }
 
@@ -89,7 +98,9 @@ var chunks = [];
 function addChunk(data){
 	chunks.push(data);
 	//console.log("pushed chunk");
-	play();
+	if (!pauseInd){
+		play();
+	}
 }
 
 var playing = false;
@@ -97,6 +108,15 @@ function play() {
 	if (playing){
 		return;
 	}
+	if (doneRendering){
+		context.fillStyle = "#000000";
+		context.fillRect(0, 0, width, height);
+		chunkCounter = 0;
+		chunkIndex = 0;
+		doneRendering = false;
+	}
+	playPauseButton.innerHTML = pauseGlyph;
+	playPauseButton.setAttribute("onclick", "pause()");
 	pauseInd = false;
 	playing = true;
 	step(performance.now());
@@ -132,16 +152,27 @@ function step(timestamp) {
 		}
 		chunkIndex = 0;
 	}
+	//console.log(gotWholeImage + " " + (chunkCounter == chunks.length));
+	if (gotWholeImage &&
+		chunkCounter == chunks.length){
+		doneRendering = true;
+		pauseInd = true;
+		playPauseButton.innerHTML = playGlyph;
+		playPauseButton.setAttribute("onclick", "play()");
+	}
 	
 	window.requestAnimationFrame(step);
 }
 
 function pause() {
 	pauseInd = true;
+	playPauseButton.innerHTML = playGlyph;
+	playPauseButton.setAttribute("onclick", "play()");
 }
 
 function reset() {
 	pause();
+	doneRendering = false;
 	window.requestAnimationFrame(resetCont);
 }
 
