@@ -22,8 +22,6 @@ public class RainbowgenServer {
 			while (true){
 				TimeUnit.SECONDS.sleep(10);
 			}
-			//System.out.println("Press any key to stop the server...");
-			//System.in.read();
 		} catch (Exception e) {
 			System.err.println(e);
 		}

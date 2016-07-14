@@ -55,13 +55,16 @@ public class ImageGeneratorApplication extends WebSocketApplication {
 			record = image.getRecord();
 			while (!image.isFinished()){
 				if (record.getNumChunks() > chunksSent){
+					if (!websocket.isConnected()){
+						return;
+					}
 					websocket.send("{\"type\": \"chunk\", \"chunk\": \"" + record.getChunk(chunksSent++) + "\"}");
 				}
 				image.nextPixel();
 			}
 		} catch (Exception e){
 			System.out.print(e.getMessage());
-			websocket.close(2, "Something went wrong while generating your image :(");
+			websocket.close(2, "Something went wrong while generating your image.");
 			return;
 		}
 

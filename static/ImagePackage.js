@@ -35,8 +35,10 @@ function paintCanvasBlack(){
 	context.fillRect(0, 0, width, height);
 }
 
+var clientDisconnected = false;
 function getImage() {
 	if (websocket !== null && websocket.readyState == 1){
+		clientDisconnected = true;
 		websocket.close();
 	}
 	downloadElement.style.visibility = 'visible';
@@ -64,15 +66,20 @@ function connect(){
 	}
 	websocket.onopen = function(){
 		//console.log('sending "' + "new " + width + " " + height + " " + 50 + '"');
-		websocket.send("new " + width + " " + height + " " + 50);
+		var min = 1;
+		var max = 100;
+		var percent = Math.floor(Math.random() * (max - min) + min);
+		console.log(percent);
+		websocket.send("new " + width + " " + height + " " + percent);
 	}
 
 	websocket.onclose = function() {
 		setTimeout( function(){
-			if (!gotWholeImage){
-			downloadElement.style.visibility = 'hidden';
-			alert("Something went wrong, sorry :(");
+			if (!clientDisconnected && !gotWholeImage){
+				downloadElement.style.visibility = 'hidden';
+				alert("Something went wrong, sorry.");
 			}
+			clientDisconnected = true;
 		}, 200);
 	}
 
