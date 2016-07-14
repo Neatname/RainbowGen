@@ -16,6 +16,7 @@ playPauseButton = document.getElementById("playpause");
 
 playGlyph = '<span class="glyphicon glyphicon-play"></span>';
 pauseGlyph = '<span class="glyphicon glyphicon-pause"></span>';
+resetGlyph = '<span class="glyphicon glyphicon-repeat"></span>'
 
 if (window.location.hostname === "localhost"){
 	uri = "ws://localhost:8080/imagesocket";
@@ -157,7 +158,7 @@ function step(timestamp) {
 		chunkCounter == chunks.length){
 		doneRendering = true;
 		pauseInd = true;
-		playPauseButton.innerHTML = playGlyph;
+		playPauseButton.innerHTML = resetGlyph;
 		playPauseButton.setAttribute("onclick", "play()");
 	}
 	
