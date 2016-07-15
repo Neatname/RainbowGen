@@ -19,59 +19,73 @@ public class ImageGeneratorApplication extends WebSocketApplication {
 
 	@Override
 	public void onMessage(WebSocket websocket, String data){
-		if (data == null || data.length() < 4){
-			throw new IllegalArgumentException();
+		ImageThread t = new ImageThread(websocket, data);
+		t.start();
+	}
+	
+	private class ImageThread extends Thread {
+		WebSocket websocket;
+		String data;
+		private ImageThread(WebSocket websocket, String data){
+			this.websocket = websocket;
+			this.data = data;
 		}
 		
-		// read and check input
-		int width = 0, height = 0, individualPercent = 0;
-		try {
-			Scanner s = new Scanner(data);
-			if (!s.next().equals("new")){
-				s.close();
+		public void run() {
+			if (data == null || data.length() < 4){
 				throw new IllegalArgumentException();
 			}
-			width = s.nextInt();
-			height = s.nextInt();
-			individualPercent = s.nextInt();
-			s.close();
-			if (width <= 0|| height <= 0 || individualPercent <= 0 ||
-				width > MAX_DIMENSIONS || height > MAX_DIMENSIONS || individualPercent > MAX_PERCENT){
-				throw new IllegalArgumentException();
-			}
-		} catch (Exception e){
-			websocket.close(1, "Error: invalid request");
-			return;
-		}
-		
-		// build image
-		RandomImage image = null;
-		ImageRecord record = null;
-		int chunksSent = 0;
-		try {
-			websocket.sendPing(PING_DATA);
-			//System.out.println("Building " + width + " " + height + " " + individualPercent);
-			image = new FastIterator(width, height, individualPercent);
-			record = image.getRecord();
-			while (!image.isFinished()){
-				if (record.getNumChunks() > chunksSent){
-					if (!websocket.isConnected()){
-						return;
-					}
-					websocket.send("{\"type\": \"chunk\", \"chunk\": \"" + record.getChunk(chunksSent++) + "\"}");
+			
+			// read and check input
+			int width = 0, height = 0, individualPercent = 0;
+			try {
+				Scanner s = new Scanner(data);
+				if (!s.next().equals("new")){
+					s.close();
+					throw new IllegalArgumentException();
 				}
-				image.nextPixel();
+				width = s.nextInt();
+				height = s.nextInt();
+				individualPercent = s.nextInt();
+				s.close();
+				if (width <= 0|| height <= 0 || individualPercent <= 0 ||
+					width > MAX_DIMENSIONS || height > MAX_DIMENSIONS || individualPercent > MAX_PERCENT){
+					throw new IllegalArgumentException();
+				}
+			} catch (Exception e){
+				websocket.close(1, "Error: invalid request");
+				return;
 			}
-		} catch (Exception e){
-			System.out.print(e.getMessage());
-			websocket.close(2, "Something went wrong while generating your image.");
-			return;
-		}
+			
+			// build image
+			RandomImage image = null;
+			ImageRecord record = null;
+			int chunksSent = 0;
+			try {
+				websocket.sendPing(PING_DATA);
+				//System.out.println("Building " + width + " " + height + " " + individualPercent);
+				image = new FastIterator(width, height, individualPercent);
+				record = image.getRecord();
+				while (!image.isFinished()){
+					if (record.getNumChunks() > chunksSent){
+						if (!websocket.isConnected()){
+							return;
+						}
+						websocket.send("{\"type\": \"chunk\", \"chunk\": \"" + record.getChunk(chunksSent++) + "\"}");
+					}
+					image.nextPixel();
+				}
+			} catch (Exception e){
+				System.out.print(e.getMessage());
+				websocket.close(2, "Something went wrong while generating your image.");
+				return;
+			}
 
-		record.makeFinal();
-		if (chunksSent < record.getNumChunks()){
-			websocket.send("{\"type\": \"chunk\", \"chunk\": \"" + record.getChunk(chunksSent++) + "\"}");
+			record.makeFinal();
+			if (chunksSent < record.getNumChunks()){
+				websocket.send("{\"type\": \"chunk\", \"chunk\": \"" + record.getChunk(chunksSent++) + "\"}");
+			}
+			websocket.send("{\"type\": \"done\"}");
 		}
-		websocket.send("{\"type\": \"done\"}");
 	}
 }
