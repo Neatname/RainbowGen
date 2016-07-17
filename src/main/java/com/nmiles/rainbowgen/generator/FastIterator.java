@@ -24,7 +24,6 @@ public class FastIterator extends RandomImage {
         int colorToAdd = new Color(startR, startG, startB).getRGB();
         
         updateImage(pixelToAdd.getX(), pixelToAdd.getY(), colorToAdd);
-        colorTracker[startR][startG][startB] = 0;
         
         edgeIterator = edgeList.listIterator();
     }
@@ -40,12 +39,11 @@ public class FastIterator extends RandomImage {
         
         int colorToMatch = image.getRGB(toAddTo.getX(), toAddTo.getY());
         
-        List<Integer> colorPossibilities = getClosestColors(colorToMatch);
+        List<Integer> colorPossibilities = colorTracker.getClosestColors(colorToMatch);
         
         while (nextPossibilities.size() != 0 && colorPossibilities.size() != 0){
             DirectionalPixel pixelToAdd = nextPossibilities.remove(rand.nextInt(nextPossibilities.size()));
             int colorToAdd = colorPossibilities.remove(rand.nextInt(colorPossibilities.size()));
-            colorTracker[(int)((colorToAdd >> 16) & 0xFF)][(int)((colorToAdd >> 8) & 0xFF)][(int)(colorToAdd & 0xFF)] = 0;
             edgeIterator.add(pixelToAdd);
             pixelsFilled++;
             if (rand.nextInt(2) == 0){

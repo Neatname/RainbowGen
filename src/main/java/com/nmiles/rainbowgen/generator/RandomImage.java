@@ -26,7 +26,7 @@ public abstract class RandomImage {
     
     protected int height;
     
-    protected int[][][] colorTracker;
+    protected ColorTracker colorTracker;
     
     protected BufferedImage image;
     
@@ -56,7 +56,7 @@ public abstract class RandomImage {
         graphics.setPaint(new Color (0, 0, 0, 254));
         graphics.fillRect(0, 0, image.getWidth(), image.getHeight());
         
-        setupColorTracker();
+        colorTracker = new ColorTracker(width * height);
         edgeList = new LinkedList<DirectionalPixel>();
         record = new ImageRecord(width * height);
         pixelsFilled = 0;
@@ -67,182 +67,16 @@ public abstract class RandomImage {
         return image;
     }
     
-    // SCALING
-    /*private void setupColorTracker(){
-        if (width * height <= MAX_COLORS){
-            fillColorTracker();
-        } else {
-            throw new IllegalArgumentException();
-        }
-    }*/
     
-    private void setupColorTracker(){
-        if (width * height == MAX_COLORS){
-            fillColorTracker();
-        } else if (width * height < MAX_COLORS){
-            fillRandomColors();
-        } else {
-            throw new IllegalArgumentException();
-        }
-    }
-    
-    // SCALING
-    /*private void fillColorTracker(){
-    	int pixels = width * height;
-    	int arraySize = 1;
-    	while (arraySize * arraySize * arraySize < pixels){
-    		arraySize++;
-    	}
-    	colorScalar = (double) RGB_VALUES / (double) arraySize;
-        colorTracker = new int[arraySize][arraySize][arraySize];
-        for (int r = 0; r < arraySize; r++){
-            for (int g = 0; g < arraySize; g++){
-                for (int b = 0; b < arraySize; b++){
-                    colorTracker[r][g][b] = new Color((int)(r * colorScalar), (int)(g * colorScalar), (int)(b * colorScalar)).getRGB();
-                    //System.out.println(colorTracker[r][g][b]);
-                }
-            }
-        }
-        
-    }*/
-    
-    private void fillColorTracker(){
-        colorTracker = new int[256][256][256];
-        for (int r = 0; r <= 255; r++){
-            for (int g = 0; g<= 255; g++){
-                for (int b = 0; b <= 255; b++){
-                    colorTracker[r][g][b] = new Color(r, g, b, 255).getRGB();
-                }
-            }
-        }
-    }
-    
-    private void fillRandomColors(){
-        colorTracker = new int[256][256][256];
-        int target = width * height;
-        for (int i = 0; i < target; i++){
-            int r = rand.nextInt(256);
-            int g = rand.nextInt(256);
-            int b = rand.nextInt(256);
-            if (colorTracker[r][g][b] == 0){
-                colorTracker[r][g][b] = new Color(r, g, b, 255).getRGB();
-            } else {
-                i--;
-            }
-        }
-    }
-    
-    /**
-    public void saveImage(String path){
-        File out = new File(path);
-        try {
-            ImageIO.write(image, "PNG", out);
-        } catch (IOException e){
-            System.out.println("Image save failed, exiting...");
-            System.exit(0);
-        }
-    }*/
+
     
     protected void updateImage(int x, int y, int color){
         image.setRGB(x, y, color);
         record.addPixel(x, y, color);
+        colorTracker.markUsed(color);
     }
     
-    public List<Integer> getClosestColors(int colorToMatch){
-        List<Integer> closestColors = new ArrayList<Integer>();
-        int rToCheck;
-        int bToCheck;
-        int gToCheck;
-        int currentR = (colorToMatch >> 16) & 0xFF;
-        int currentG = (colorToMatch >> 8) & 0xFF;
-        int currentB = colorToMatch & 0xFF;
-        //currentR /= colorScalar;
-        //currentG /= colorScalar;
-        //currentB /= colorScalar;
-        int range = 0;
-        do{
-            range++;
-            rToCheck = currentR - range;
-            if (rToCheck >= 0){
-                for (int g = -range; g <= range; g++){
-                    for (int b = -range; b <= range; b++){
-                        gToCheck = g + currentG;
-                        bToCheck = b + currentB;
-                        if (gToCheck >= 0 && bToCheck >= 0 && gToCheck < RGB_VALUES && bToCheck < RGB_VALUES &&
-                            colorTracker[rToCheck][gToCheck][bToCheck] != 0){
-                            closestColors.add(colorTracker[rToCheck][gToCheck][bToCheck]);
-                        }
-                    }
-                }
-            }
-            rToCheck = currentR + range;
-            if (rToCheck < RGB_VALUES){
-                for (int g = -range; g <= range; g++){
-                    for (int b = -range; b <= range; b++){
-                        gToCheck = g + currentG;
-                        bToCheck = b + currentB;
-                        if (gToCheck >= 0 && bToCheck >= 0 && gToCheck < RGB_VALUES && bToCheck < RGB_VALUES &&
-                            colorTracker[rToCheck][gToCheck][bToCheck] != 0){
-                            closestColors.add(colorTracker[rToCheck][gToCheck][bToCheck]);
-                        }
-                    }
-                }
-            }
-            gToCheck = currentG - range;
-            if(gToCheck >= 0){
-                for (int r = -range + 1; r <= range - 1; r++){
-                    for (int b = -range; b <= range; b++){
-                        rToCheck = r + currentR;
-                        bToCheck = b + currentB;
-                        if (rToCheck >= 0 && bToCheck >= 0 && rToCheck < RGB_VALUES && bToCheck < RGB_VALUES &&
-                            colorTracker[rToCheck][gToCheck][bToCheck] != 0){
-                            closestColors.add(colorTracker[rToCheck][gToCheck][bToCheck]);
-                        }
-                    }
-                }
-            }
-            gToCheck = currentG + range;
-            if(gToCheck < colorTracker.length){
-                for (int r = -range + 1; r <= range - 1; r++){
-                    for (int b = -range; b <= range; b++){
-                        rToCheck = r + currentR;
-                        bToCheck = b + currentB;
-                        if (rToCheck >= 0 && bToCheck >= 0 && rToCheck < RGB_VALUES && bToCheck < RGB_VALUES &&
-                            colorTracker[rToCheck][gToCheck][bToCheck] != 0){
-                            closestColors.add(colorTracker[rToCheck][gToCheck][bToCheck]);
-                        }
-                    }
-                }
-            }
-            bToCheck = currentB - range;
-            if (bToCheck >= 0){
-                for (int r = -range + 1; r <= range - 1; r++){
-                    for (int g = -range + 1; g <= range - 1; g++){
-                        rToCheck = r + currentR;
-                        gToCheck = g + currentG;
-                        if (rToCheck >= 0 && gToCheck >= 0 && rToCheck < RGB_VALUES && gToCheck < RGB_VALUES &&
-                            colorTracker[rToCheck][gToCheck][bToCheck] != 0){
-                            closestColors.add(colorTracker[rToCheck][gToCheck][bToCheck]);
-                        }
-                    }
-                }
-            }
-            bToCheck = currentB + range;
-            if (bToCheck < RGB_VALUES){
-                for (int r = -range + 1; r <= range - 1; r++){
-                    for (int g = -range + 1; g <= range - 1; g++){
-                        rToCheck = r + currentR;
-                        gToCheck = g + currentG;
-                        if (rToCheck >= 0 && gToCheck >= 0 && rToCheck < RGB_VALUES && gToCheck < RGB_VALUES &&
-                            colorTracker[rToCheck][gToCheck][bToCheck] != 0){
-                            closestColors.add(colorTracker[rToCheck][gToCheck][bToCheck]);
-                        }
-                    }
-                }
-            }
-        } while (closestColors.size() == 0);
-        return closestColors;
-    }
+    
     
     public boolean isFinished(){
         return edgeList.size() == 0;

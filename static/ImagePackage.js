@@ -43,6 +43,7 @@ function getImage() {
 	}
 	downloadElement.style.visibility = 'visible';
 	document.getElementById("buttonWrapper").style.visibility = "visible";
+	document.getElementById("sliderWrapper").style.visibility = "visible";
 	chunks = [];
 	pauseInd = false;
 	playing = false;
@@ -131,7 +132,7 @@ function play() {
 }
 
 var pixelsThisFrame;
-var ppf = 1000;
+var ppf = 500;
 var chunkCounter = 0;
 var chunkIndex = 0;
 var x;
@@ -194,4 +195,20 @@ function resetCont() {
 }
 
 paintCanvasBlack();
+var speedSlider = document.getElementById("speedSlider");
+
+function changeSpeed(){
+	ppf = speedSlider.noUiSlider.get();
+}
+
+noUiSlider.create(speedSlider,{
+	start: 500,
+	range: {
+		'min': 1,
+		'30%': 100,
+		'60%': 2000,
+		'max': 5000
+	}
+});
+speedSlider.noUiSlider.on('slide', changeSpeed);
 document.getElementById("controlsWrapper").style.visibility = 'visible';

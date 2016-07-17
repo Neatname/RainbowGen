@@ -8,6 +8,8 @@
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 
+<!-- noUISlider -->
+<link href="nouislider.min.css" rel="stylesheet">
 <!-- My stylesheet -->
 <link rel="stylesheet" type="text/css" href="style.css">
 </head>
@@ -31,9 +33,12 @@
 				<button id="playpause" type="button" class="btn btn-default" onclick="pause()">
 					<span class="glyphicon glyphicon-pause"></span>
 				</button>
-				<button id=reset" type="button" class="btn btn-default" onclick="reset()">
+				<button id="reset" type="button" class="btn btn-default" onclick="reset()">
 					<span class="glyphicon glyphicon-remove"></span>
 				</button>
+			</div>
+			<div id="sliderWrapper">
+				<div id="speedSlider"></div>
 			</div>
 		</div>
 	</div>
@@ -46,6 +51,8 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 	<!-- Bootstrap JS -->
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+	<!-- noUiSlider -->
+	<script src="nouislider.min.js"></script>
 	<!-- My rendering script -->
 	<script src="ImagePackage.js"></script>
 </body>
