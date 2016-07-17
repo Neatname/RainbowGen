@@ -2,6 +2,7 @@ package com.nmiles.rainbowgen.generator;
 
 
 import java.awt.Color;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -15,13 +16,11 @@ public class FastIterator extends RandomImage {
         
         super(width, height);
         this.individualPercent = individualPercent;
+        edgeList = new LinkedList<DirectionalPixel>();
         DirectionalPixel pixelToAdd = new DirectionalPixel(rand, width, height);
         edgeList.add(pixelToAdd);
         
-        int startR = rand.nextInt(256);
-        int startG = rand.nextInt(256);
-        int startB = rand.nextInt(256);
-        int colorToAdd = new Color(startR, startG, startB).getRGB();
+        int colorToAdd = colorTracker.getRandomUnused();
         
         updateImage(pixelToAdd.getX(), pixelToAdd.getY(), colorToAdd);
         

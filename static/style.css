@@ -86,3 +86,30 @@ body {
 .glyphicon {
    top: 2px;
 }
+
+#newButton {
+   padding: 6px 6px;
+}
+
+.imageOptions {
+   display: none;
+}
+
+#iteratorOptions {
+   display: inline;
+}
+
+.modal-content {
+   background-color: #eee;
+}
+
+.modal-dialog {
+   width: 400px;
+}
+
+.newButton {
+   margin-top: 5px;
+}
+.form-control {
+   width: 70px;
+}

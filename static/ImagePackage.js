@@ -36,7 +36,7 @@ function paintCanvasBlack(){
 }
 
 var clientDisconnected = false;
-function getImage() {
+function getImage(imageType) {
 	if (websocket !== null && websocket.readyState == 1){
 		clientDisconnected = true;
 		websocket.close();
@@ -53,10 +53,18 @@ function getImage() {
 	gotWholeImage = false;
 	paintCanvasBlack();
 	play();
-	connect();
+	connect(imageType);
 }
 
-function connect(){
+function newIterator(){
+	getImage("fastIterator");
+}
+
+function newStained(){
+	getImage("stainedGlass")
+}
+
+function connect(imageType){
 	if ('WebSocket' in window) {
 		websocket = new WebSocket(uri);
 	} else if ('MozWebSocket' in window) {
@@ -66,12 +74,27 @@ function connect(){
 		return;
 	}
 	websocket.onopen = function(){
-		//console.log('sending "' + "new " + width + " " + height + " " + 50 + '"');
-		var min = 1;
-		var max = 100;
-		var percent = Math.floor(Math.random() * (max - min) + min);
-		console.log(percent);
-		websocket.send("new " + width + " " + height + " " + percent);
+		switch (imageType){
+			case "fastIterator":
+				var percent = parseInt($("#iteratorPercent").val());
+				websocket.send(JSON.stringify({
+					"type": "fastIterator",
+					"width": width,
+					"height": height,
+					"individualPercent": percent
+				}));
+				break;
+			case "stainedGlass":
+				var startingPoints = parseInt($("#startingPoints").val());
+				websocket.send(JSON.stringify({
+					"type": "stainedGlass",
+					"width": width,
+					"height": height,
+					"startingPoints": startingPoints
+				}));
+				break;
+		}
+		//websocket.send("new " + width + " " + height + " " + percent);
 	}
 
 	websocket.onclose = function() {
@@ -88,16 +111,19 @@ function connect(){
 		var data = JSON.parse(event.data);
 		var type = data.type;
 		switch (type){
+			case "chunk":
+				//console.log("Got a chunk");
+				addChunk(data.chunk);
+				break;
 			case "done":
 				console.log("Done. Got " + chunks.length + " chunks.");
 				gotWholeImage = true;
 				websocket.close();
 				downloadElement.style.visibility = 'hidden';
 				break;
-			case "chunk":
-				//console.log("Got a chunk");
-				addChunk(data.chunk);
-				break;
+			case "error":
+				alert(data.message);
+				websocket.close();
 		}
 	}
 }

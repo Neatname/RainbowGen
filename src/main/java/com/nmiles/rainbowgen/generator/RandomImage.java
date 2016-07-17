@@ -57,7 +57,6 @@ public abstract class RandomImage {
         graphics.fillRect(0, 0, image.getWidth(), image.getHeight());
         
         colorTracker = new ColorTracker(width * height);
-        edgeList = new LinkedList<DirectionalPixel>();
         record = new ImageRecord(width * height);
         pixelsFilled = 0;
         totalPixels = width * height;

@@ -11,14 +11,15 @@ class ColorTracker {
 	private int MAX_DIMENSION = 256;
 	
 	public static final int MAX_COLORS = 16777216;
+	Random rand;
 
 	ColorTracker(int colors) {
+		rand = new Random();
 		fillRandomColors(colors);
 	}
 	
 	private void fillRandomColors(int colors){
         tracker = new int[256][256][256];
-        Random rand = new Random();
         for (int i = 0; i < colors; i++){
             int r = rand.nextInt(256);
             int g = rand.nextInt(256);
@@ -140,5 +141,18 @@ class ColorTracker {
 		int g = (int)((color >> 8) & 0xFF);
 		int b = (int)(color & 0xFF);
 		tracker[r][g][b] = 0;
+	}
+	
+	int getRandomUnused(){
+		int ret = 1;
+		while (ret == 1){
+			int r = rand.nextInt(tracker.length);
+			int g = rand.nextInt(tracker.length);
+			int b = rand.nextInt(tracker.length);
+			if (tracker[r][g][b] != 0){
+				ret = tracker[r][g][b];
+			}
+		}
+		return ret;
 	}
 }
