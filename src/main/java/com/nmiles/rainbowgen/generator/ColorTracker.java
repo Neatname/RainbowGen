@@ -34,25 +34,26 @@ class ColorTracker {
 	public List<Integer> getClosestColors(int colorToMatch){
         List<Integer> closestColors = new ArrayList<Integer>();
         int rToCheck;
-        int bToCheck;
         int gToCheck;
+        int bToCheck;
         int currentR = (colorToMatch >> 16) & 0xFF;
         int currentG = (colorToMatch >> 8) & 0xFF;
         int currentB = colorToMatch & 0xFF;
-        //currentR /= colorScalar;
-        //currentG /= colorScalar;
-        //currentB /= colorScalar;
         int range = 0;
+        int redStart, redEnd,
+        	greenStart, greenEnd,
+        	blueStart, blueEnd;
         do{
             range++;
             rToCheck = currentR - range;
             if (rToCheck >= 0){
-                for (int g = -range; g <= range; g++){
-                    for (int b = -range; b <= range; b++){
-                        gToCheck = g + currentG;
-                        bToCheck = b + currentB;
-                        if (gToCheck >= 0 && bToCheck >= 0 && gToCheck < 256 && bToCheck < 256 &&
-                            tracker[rToCheck][gToCheck][bToCheck] != 0){
+            	greenStart = Math.max(0, currentG - range);
+            	greenEnd = Math.min(255, currentG + range);
+            	blueStart = Math.max(0, currentB - range);
+            	blueEnd = Math.min(255, currentB + range);
+                for (gToCheck = greenStart; gToCheck <= greenEnd; gToCheck++){
+                    for (bToCheck = blueStart; bToCheck <= blueEnd; bToCheck++){
+                        if (tracker[rToCheck][gToCheck][bToCheck] != 0){
                             closestColors.add(tracker[rToCheck][gToCheck][bToCheck]);
                         }
                     }
@@ -60,12 +61,13 @@ class ColorTracker {
             }
             rToCheck = currentR + range;
             if (rToCheck < 256){
-                for (int g = -range; g <= range; g++){
-                    for (int b = -range; b <= range; b++){
-                        gToCheck = g + currentG;
-                        bToCheck = b + currentB;
-                        if (gToCheck >= 0 && bToCheck >= 0 && gToCheck < 256 && bToCheck < 256 &&
-                        		tracker[rToCheck][gToCheck][bToCheck] != 0){
+            	greenStart = Math.max(0, currentG - range);
+            	greenEnd = Math.min(255, currentG + range);
+            	blueStart = Math.max(0, currentB - range);
+            	blueEnd = Math.min(255, currentB + range);
+                for (gToCheck = greenStart; gToCheck <= greenEnd; gToCheck++){
+                    for (bToCheck = blueStart; bToCheck <= blueEnd; bToCheck++){
+                        if (tracker[rToCheck][gToCheck][bToCheck] != 0){
                             closestColors.add(tracker[rToCheck][gToCheck][bToCheck]);
                         }
                     }
@@ -73,12 +75,13 @@ class ColorTracker {
             }
             gToCheck = currentG - range;
             if(gToCheck >= 0){
-                for (int r = -range + 1; r <= range - 1; r++){
-                    for (int b = -range; b <= range; b++){
-                        rToCheck = r + currentR;
-                        bToCheck = b + currentB;
-                        if (rToCheck >= 0 && bToCheck >= 0 && rToCheck < 256 && bToCheck < 256 &&
-                        		tracker[rToCheck][gToCheck][bToCheck] != 0){
+            	redStart = Math.max(0, currentR - range + 1);
+            	redEnd = Math.min(255, currentR + range - 1);
+            	blueStart = Math.max(0, currentB - range);
+            	blueEnd = Math.min(255, currentB + range);
+                for (rToCheck = redStart; rToCheck <= redEnd; rToCheck++){
+                    for (bToCheck = blueStart; bToCheck <= blueEnd; bToCheck++){
+                        if (tracker[rToCheck][gToCheck][bToCheck] != 0){
                             closestColors.add(tracker[rToCheck][gToCheck][bToCheck]);
                         }
                     }
@@ -86,12 +89,13 @@ class ColorTracker {
             }
             gToCheck = currentG + range;
             if(gToCheck < 256){
-                for (int r = -range + 1; r <= range - 1; r++){
-                    for (int b = -range; b <= range; b++){
-                        rToCheck = r + currentR;
-                        bToCheck = b + currentB;
-                        if (rToCheck >= 0 && bToCheck >= 0 && rToCheck < 256 && bToCheck < 256 &&
-                        		tracker[rToCheck][gToCheck][bToCheck] != 0){
+            	redStart = Math.max(0, currentR - range + 1);
+            	redEnd = Math.min(255, currentR + range - 1);
+            	blueStart = Math.max(0, currentB - range);
+            	blueEnd = Math.min(255, currentB + range);
+                for (rToCheck = redStart; rToCheck <= redEnd; rToCheck++){
+                    for (bToCheck = blueStart; bToCheck <= blueEnd; bToCheck++){
+                        if (tracker[rToCheck][gToCheck][bToCheck] != 0){
                             closestColors.add(tracker[rToCheck][gToCheck][bToCheck]);
                         }
                     }
@@ -99,12 +103,13 @@ class ColorTracker {
             }
             bToCheck = currentB - range;
             if (bToCheck >= 0){
-                for (int r = -range + 1; r <= range - 1; r++){
-                    for (int g = -range + 1; g <= range - 1; g++){
-                        rToCheck = r + currentR;
-                        gToCheck = g + currentG;
-                        if (rToCheck >= 0 && gToCheck >= 0 && rToCheck < 256 && gToCheck < 256 &&
-                        		tracker[rToCheck][gToCheck][bToCheck] != 0){
+            	redStart = Math.max(0, currentR - range + 1);
+            	redEnd = Math.min(255, currentR + range - 1);
+            	greenStart = Math.max(0, currentG - range + 1);
+            	greenEnd = Math.min(255, currentG + range - 1);
+                for (rToCheck = redStart; rToCheck <= redEnd; rToCheck++){
+                    for (gToCheck = greenStart; gToCheck <= greenEnd; gToCheck++){
+                        if (tracker[rToCheck][gToCheck][bToCheck] != 0){
                             closestColors.add(tracker[rToCheck][gToCheck][bToCheck]);
                         }
                     }
@@ -112,12 +117,13 @@ class ColorTracker {
             }
             bToCheck = currentB + range;
             if (bToCheck < 256){
-                for (int r = -range + 1; r <= range - 1; r++){
-                    for (int g = -range + 1; g <= range - 1; g++){
-                        rToCheck = r + currentR;
-                        gToCheck = g + currentG;
-                        if (rToCheck >= 0 && gToCheck >= 0 && rToCheck < 256 && gToCheck < 256 &&
-                        		tracker[rToCheck][gToCheck][bToCheck] != 0){
+            	redStart = Math.max(0, currentR - range + 1);
+            	redEnd = Math.min(255, currentR + range - 1);
+            	greenStart = Math.max(0, currentG - range + 1);
+            	greenEnd = Math.min(255, currentG + range - 1);
+                for (rToCheck = redStart; rToCheck <= redEnd; rToCheck++){
+                    for (gToCheck = greenStart; gToCheck <= greenEnd; gToCheck++){
+                        if (tracker[rToCheck][gToCheck][bToCheck] != 0){
                             closestColors.add(tracker[rToCheck][gToCheck][bToCheck]);
                         }
                     }
