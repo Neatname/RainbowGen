@@ -18,7 +18,7 @@ public class ImageRecord {
 	
 	private static final int ALPHA_MASK = 0x00FFFFFF;
 	
-	private static final int CHUNK_SIZE = 5000;
+	private static final int CHUNK_SIZE = 2000;
 	
 	private static final int BYTES_PER_CHUNK = 12 * CHUNK_SIZE;
 	

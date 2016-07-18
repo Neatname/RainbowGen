@@ -43,6 +43,18 @@ class ColorTracker {
         		}
         	}
         }
+        int toRemove = (dimension * dimension * dimension) - colors;
+        for (; toRemove > 0; toRemove--){
+        	int r = rand.nextInt(dimension);
+        	int g = rand.nextInt(dimension);
+        	int b = rand.nextInt(dimension);
+        	if (tracker[r][g][b] == 0){
+        		toRemove++;
+        		continue;
+        	} else {
+        		tracker[r][g][b] = 0;
+        	}
+        }
     }
 	
 	public List<Integer> getClosestColors(int colorToMatch){
