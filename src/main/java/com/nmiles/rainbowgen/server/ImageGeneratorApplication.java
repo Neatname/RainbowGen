@@ -1,5 +1,10 @@
 package com.nmiles.rainbowgen.server;
 
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.TimeUnit;
+
+import org.glassfish.grizzly.GrizzlyFuture;
+import org.glassfish.grizzly.websockets.DataFrame;
 import org.glassfish.grizzly.websockets.WebSocket;
 import org.glassfish.grizzly.websockets.WebSocketApplication;
 import org.json.simple.JSONObject;
@@ -22,6 +27,11 @@ public class ImageGeneratorApplication extends WebSocketApplication {
 	public void onMessage(WebSocket websocket, String data){
 		ImageThread t = new ImageThread(websocket, data);
 		t.start();
+	}
+	
+	@Override
+	public void onClose(WebSocket socket, DataFrame frame){
+		ChunkScheduler.getInstance().remove(socket);
 	}
 	
 	private class ImageThread extends Thread {
@@ -53,6 +63,8 @@ public class ImageGeneratorApplication extends WebSocketApplication {
 				websocket.send("Parse error");
 				return;
 			}
+			ChunkScheduler scheduler = ChunkScheduler.getInstance();
+			ConcurrentLinkedQueue <String> queue = scheduler.register(websocket);
 			// build image
 			RandomImage image = null;
 			ImageRecord record = null;
@@ -79,22 +91,22 @@ public class ImageGeneratorApplication extends WebSocketApplication {
 						if (!websocket.isConnected()){
 							return;
 						}
-						websocket.send("{\"type\": \"chunk\", \"chunk\": \"" + record.getChunk(chunksSent++) + "\"}");
+						queue.add("{\"type\": \"chunk\", \"chunk\": \"" + record.getChunk(chunksSent++) + "\"}");
 					}
 					image.nextPixel();
 				}
 			} catch (Exception e){
 				System.out.print(e.getMessage());
 				e.printStackTrace();
-				websocket.send("{\"type\": \"error\", \"message\": \"Something went wrong while generating your image.\"}");
+				queue.add("{\"type\": \"error\", \"message\": \"Something went wrong while generating your image.\"}");
 				return;
 			}
 
 			record.makeFinal();
 			if (chunksSent < record.getNumChunks()){
-				websocket.send("{\"type\": \"chunk\", \"chunk\": \"" + record.getChunk(chunksSent++) + "\"}");
+				queue.add("{\"type\": \"chunk\", \"chunk\": \"" + record.getChunk(chunksSent++) + "\"}");
 			}
-			websocket.send("{\"type\": \"done\"}");
+			queue.add("{\"type\": \"done\"}");
 		}
 	}
 }

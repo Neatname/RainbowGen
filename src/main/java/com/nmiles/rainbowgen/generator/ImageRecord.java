@@ -1,20 +1,9 @@
 package com.nmiles.rainbowgen.generator;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ImageRecord {
-	
-	private static final int RED_MASK = 0x00FF0000;
-	
-	private static final int GREEN_MASK = 0x0000FF00;
-	
-	private static final int BLUE_MASK = 0x000000FF;
-	
-	private static final int BOTTOM_X_MASK = 0x0000000F;
-	
-	private static final int BOTTOM_Y_MASK = 0x000000FF;
 	
 	private static final int ALPHA_MASK = 0x00FFFFFF;
 	
