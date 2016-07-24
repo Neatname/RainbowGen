@@ -4,23 +4,22 @@ package com.nmiles.rainbowgen.generator;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
-import javax.imageio.ImageIO;
-
+/**
+ * 
+ * @author Nathan Miles
+ *
+ */
 public abstract class RandomImage {
     /** this is the number of colors representable in 32 bits. */
     public static final int MAX_COLORS = 16777216;
     
+    public static final int MAX_DIMENSION = 4096;
+    
     public static final int RGB_VALUES = 256;
     
     public static final int MAX_COLOR_VALUE = 255;
-    
-    private static final int ALPHA_MASK = 0x00FFFFFF;
     
     protected int width;
     
@@ -34,8 +33,6 @@ public abstract class RandomImage {
     
     protected int pixelsFilled;
     
-    //protected double colorScalar;
-    
     protected List<DirectionalPixel> edgeList;
     
     protected XORShiftRandom rand;
@@ -44,8 +41,8 @@ public abstract class RandomImage {
     
     
     public RandomImage(int width, int height){
-        if (width * height > MAX_COLORS){
-            throw new IllegalArgumentException();
+        if (width > MAX_DIMENSION || height > MAX_DIMENSION){
+            throw new IllegalArgumentException("Image's dimensions must be <= 4096x4096.");
         }
         this.width = width;
         this.height = height;

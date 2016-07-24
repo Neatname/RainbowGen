@@ -5,6 +5,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+/**
+ * 
+ * @author Nathan Miles
+ *
+ */
 public class FastIterator extends RandomImage {
 
     private int individualPercent;
