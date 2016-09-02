@@ -19,145 +19,145 @@ import org.glassfish.grizzly.websockets.WebSocket;
  */
 public class ChunkScheduler implements CompletionHandler<DataFrame>, Runnable {
 
-	private static ChunkScheduler instance = null;
+    private static ChunkScheduler instance = null;
 
-	private List<SocketQueue> queue;
+    private List<SocketQueue> queue;
 
-	private ReentrantReadWriteLock queueLock;
+    private ReentrantReadWriteLock queueLock;
 
-	private ExecutorService executor;
+    private ExecutorService executor;
 
-	private ChunkScheduler() {
-		queue = new LinkedList<>();
-		queueLock = new ReentrantReadWriteLock(true);
-		executor = Executors.newSingleThreadExecutor();
-	}
+    private ChunkScheduler() {
+        queue = new LinkedList<>();
+        queueLock = new ReentrantReadWriteLock(true);
+        executor = Executors.newSingleThreadExecutor();
+    }
 
-	private synchronized void sendBatch() {
-		boolean sentOne = false;
-		try {
-			while (!sentOne) {
-				queueLock.readLock().lock();
+    private synchronized void sendBatch() {
+        boolean sentOne = false;
+        try {
+            while (!sentOne) {
+                queueLock.readLock().lock();
 
-				if (queue.isEmpty()) {
-					return;
-				}
-				ListIterator<SocketQueue> iter = queue.listIterator();
-				SocketQueue current;
-				String message;
-				while (iter.hasNext()) {
-					current = iter.next();
-					message = current.messages.poll();
-					if (message != null) {
-						current.socket.send(message).addCompletionHandler(this);
-						sentOne = true;
-						break;
-					}
-				}
-				while (iter.hasNext()) {
-					current = iter.next();
-					message = current.messages.poll();
-					if (message != null) {
-						current.socket.send(message);
-					}
-				}
+                if (queue.isEmpty()) {
+                    return;
+                }
+                ListIterator<SocketQueue> iter = queue.listIterator();
+                SocketQueue current;
+                String message;
+                while (iter.hasNext()) {
+                    current = iter.next();
+                    message = current.messages.poll();
+                    if (message != null) {
+                        current.socket.send(message).addCompletionHandler(this);
+                        sentOne = true;
+                        break;
+                    }
+                }
+                while (iter.hasNext()) {
+                    current = iter.next();
+                    message = current.messages.poll();
+                    if (message != null) {
+                        current.socket.send(message);
+                    }
+                }
 
-				queueLock.readLock().unlock();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			queueLock.readLock().unlock();
-		}
-	}
+                queueLock.readLock().unlock();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            queueLock.readLock().unlock();
+        }
+    }
 
-	@Override
-	public void run() {
-		sendBatch();
-	}
+    @Override
+    public void run() {
+        sendBatch();
+    }
 
-	@Override
-	public void completed(DataFrame arg0) {
-		executor.submit(this);
-	}
+    @Override
+    public void completed(DataFrame arg0) {
+        executor.submit(this);
+    }
 
-	@Override
-	public void cancelled() {
-		// do nothing
-	}
+    @Override
+    public void cancelled() {
+        // do nothing
+    }
 
-	@Override
-	public void failed(Throwable arg0) {
-		// do nothing
-	}
+    @Override
+    public void failed(Throwable arg0) {
+        // do nothing
+    }
 
-	@Override
-	public void updated(DataFrame arg0) {
-		// do nothing
-	}
+    @Override
+    public void updated(DataFrame arg0) {
+        // do nothing
+    }
 
-	public static ChunkScheduler getInstance() {
-		if (instance == null) {
-			instance = new ChunkScheduler();
-		}
-		return instance;
-	}
+    public static ChunkScheduler getInstance() {
+        if (instance == null) {
+            instance = new ChunkScheduler();
+        }
+        return instance;
+    }
 
-	public ConcurrentLinkedQueue<String> register(WebSocket socket) {
-		boolean shouldStartRunner = false;
-		ConcurrentLinkedQueue<String> retQueue = null;
-		try {
-			queueLock.writeLock().lock();
-			if (queue.isEmpty()) {
-				shouldStartRunner = true;
-			}
-			SocketQueue newQueue = new SocketQueue(socket);
-			retQueue = newQueue.messages;
-			queue.add(newQueue);
-			System.out.println("Registered sockets: " + queue.size());
-		} catch (Exception e) {
-			System.out.println("Exception while registering WebSocket: "
-					+ e.getMessage());
-		} finally {
-			queueLock.writeLock().unlock();
-		}
-		if (shouldStartRunner) {
-			executor.submit(this);
-		}
-		return retQueue;
-	}
+    public ConcurrentLinkedQueue<String> register(WebSocket socket) {
+        boolean shouldStartRunner = false;
+        ConcurrentLinkedQueue<String> retQueue = null;
+        try {
+            queueLock.writeLock().lock();
+            if (queue.isEmpty()) {
+                shouldStartRunner = true;
+            }
+            SocketQueue newQueue = new SocketQueue(socket);
+            retQueue = newQueue.messages;
+            queue.add(newQueue);
+            System.out.println("Registered sockets: " + queue.size());
+        } catch (Exception e) {
+            System.out.println("Exception while registering WebSocket: "
+                    + e.getMessage());
+        } finally {
+            queueLock.writeLock().unlock();
+        }
+        if (shouldStartRunner) {
+            executor.submit(this);
+        }
+        return retQueue;
+    }
 
-	public void remove(WebSocket socket) {
-		try {
-			queueLock.writeLock().lock();
-			ListIterator<SocketQueue> i = queue.listIterator();
-			if (!i.hasNext()) {
-				return;
-			}
-			SocketQueue current;
-			while (i.hasNext()) {
-				current = i.next();
-				if (current.socket == socket) {
-					i.remove();
-				}
-			}
-			System.out.println("Registered sockets: " + queue.size());
-		} catch (Exception e) {
-			System.out.println("Exception while removing WebSocket: "
-					+ e.getMessage());
-		} finally {
-			queueLock.writeLock().unlock();
-		}
-	}
+    public void remove(WebSocket socket) {
+        try {
+            queueLock.writeLock().lock();
+            ListIterator<SocketQueue> i = queue.listIterator();
+            if (!i.hasNext()) {
+                return;
+            }
+            SocketQueue current;
+            while (i.hasNext()) {
+                current = i.next();
+                if (current.socket == socket) {
+                    i.remove();
+                }
+            }
+            System.out.println("Registered sockets: " + queue.size());
+        } catch (Exception e) {
+            System.out.println("Exception while removing WebSocket: "
+                    + e.getMessage());
+        } finally {
+            queueLock.writeLock().unlock();
+        }
+    }
 
-	private class SocketQueue {
-		private WebSocket socket;
+    private class SocketQueue {
+        private WebSocket socket;
 
-		private ConcurrentLinkedQueue<String> messages;
+        private ConcurrentLinkedQueue<String> messages;
 
-		private SocketQueue(WebSocket socket) {
-			this.socket = socket;
-			messages = new ConcurrentLinkedQueue<>();
-		}
-	}
+        private SocketQueue(WebSocket socket) {
+            this.socket = socket;
+            messages = new ConcurrentLinkedQueue<>();
+        }
+    }
 }
