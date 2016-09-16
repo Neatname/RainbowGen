@@ -101,6 +101,7 @@ body {
 
 .modal-content {
    background-color: #eee;
+   max-width: 90%;
 }
 
 .modal-dialog {
