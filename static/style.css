@@ -119,3 +119,9 @@ body {
    padding-left: 8px;
    margin-right: 2px;
 }
+.modal-header {
+   padding-bottom:0px;
+}
+.modal-body {
+   padding-top:5px;
+}

@@ -119,14 +119,30 @@
                <h4 class="modal-title">About</h4>
             </div>
             <div class="modal-body">
+               <h3>Me</h3>
+               <p>My name is Nathan Miles and I am currently a senior in NCSU's computer science program.
+               I love programming, especially when the results are as rewarding as they are with this
+               project. I have been working on different versions of this project for over a year now and
+               I have no plans to stop.</p>
                <h3>The Program</h3>
-               <p>As you have probably already seen, this program creates beautiful art. But how? The way
-               in which the program creates the images is, to me at least, more beautiful than the images
-               themselves.</p>
-               <p></p>
-            </div>
-            <div class="modal-footer">
-               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+               <p>For a more in-depth look at my algorithms and the differences between the ones presented
+               here, have a look at my GitHub repo
+               <a href="https://github.com/Neatname/RainbowGen" target="_blank">here</a>.</p>
+               <p>The initial idea for this program was to create images that use every RGB color exactly
+               once. I scaled this down for the web application, as those images are too big to reasonably
+               send over the internet. I was heavily inlfuenced and inspired by the
+               <a href="http://rainbowsmoke.hu/home" target="_blank">work of Jozsef Fejes</a>, which
+               made the news back in 2014. We use the same basic strategy for building images, but
+               our more advanced algorithms produce wildly different results.</p>
+               <p>Each image starts with a random pixel or pixels, which are added to a list. As more
+               pixels are added, they are each also added to this list. This list contains every pixel in
+               the image considered to be on the "edge" of the image, meaning that it has at least one
+               adjacent black, unpopulated pixel. When it's time to add a pixel, a pixel is chosen from the
+               list and given one or more neighbors. These neighbors are then added into the list as well. If
+               no neighbors may be added because they are all already populated, the chosen pixel is removed
+               from the list. This process repeats until the image is full.</p>
+               <p>Colors for new pixels are chosen by finding the closest unused color to the pixel that was
+               chosen from the list.</p>
             </div>
          </div>
       </div>
@@ -144,6 +160,7 @@
 	<!-- My rendering script -->
 	<script src="ImagePackage.js"></script>
 	<script>
+   // these functions handle switching the input fields in the New modal
 	$("#iteratorDrop").click(function (){
 		hideAllOptions(function() {
 			document.getElementById("imageTypeDropdown").innerHTML = 'Iterator <span class="caret"></span>';
