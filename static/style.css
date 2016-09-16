@@ -101,6 +101,7 @@ body {
 
 .modal-content {
    background-color: #eee;
+   margin: 0 auto;
 }
 
 .newButton {
@@ -120,4 +121,7 @@ body {
 }
 .modal-body {
    padding-top:5px;
+}
+#newModalContent{
+   max-width: 250px;
 }
