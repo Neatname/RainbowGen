@@ -9,7 +9,7 @@ import java.util.ListIterator;
  * this class's description.
  * 
  * This algorithm produces possibly the widest range of results of any existing
- * algorithm. It works by maintaining a edgeList exactly as StainedGlass does,
+ * algorithm. It works by maintaining an edgeList exactly as StainedGlass does,
  * and the neighbor population works in exactly the same way as StainedGlass,
  * but the way that pixels are chosen from the list is extremely different.
  * Rather than choose pixels randomly from the list, it maintains an Iterator

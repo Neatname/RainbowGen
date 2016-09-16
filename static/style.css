@@ -46,7 +46,7 @@ body {
 
 #newWrapper{
    float: left;
-   margin-right: 7px;
+   margin-right: 1px;
 }
 
 #canvasWrapper {
@@ -112,4 +112,10 @@ body {
 }
 .form-control {
    width: 70px;
+}
+#infoButton {
+   float:left;
+   padding-right: 8px;
+   padding-left: 8px;
+   margin-right: 2px;
 }

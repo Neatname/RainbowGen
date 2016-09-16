@@ -28,6 +28,9 @@
 					New...
 				</button>
 			</div>
+         <button id="infoButton" type="button" class="btn btn-default" data-toggle="modal" data-target="#infoModal">
+            <span class="glyphicon glyphicon-info-sign"></span>
+         </button>
 			<div id="buttonWrapper" class="btn-group">
 				<button id="playpause" type="button" class="btn btn-default" onclick="pause()">
 					<span class="glyphicon glyphicon-pause"></span>
@@ -101,13 +104,34 @@
 							</div>
 						</form>
 					</div>
-					<div class="imageOptions" id="stainedGlassOptions">
-						<p>Stained glass options go here</p>
-					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+
+   <div class="modal fade" id="infoModal">
+      <div class="modal-dialog" role="document">
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+               </button>
+               <h4 class="modal-title">About</h4>
+            </div>
+            <div class="modal-body">
+               <h3>The Program</h3>
+               <p>As you have probably already seen, this program creates beautiful art. But how? The way
+               in which the program creates the images is, to me at least, more beautiful than the images
+               themselves.</p>
+               <p></p>
+            </div>
+            <div class="modal-footer">
+               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+         </div>
+      </div>
+   </div>
+
 	<div id="canvasWrapper">
 		<canvas id="myCanvas"></canvas>
 	</div>
