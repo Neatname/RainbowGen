@@ -94,7 +94,6 @@ function connect(imageType){
 				}));
 				break;
 		}
-		//websocket.send("new " + width + " " + height + " " + percent);
 	}
 
 	websocket.onclose = function() {
@@ -112,7 +111,6 @@ function connect(imageType){
 		var type = data.type;
 		switch (type){
 			case "chunk":
-				//console.log("Got a chunk");
 				addChunk(data.chunk);
 				break;
 			case "done":
@@ -132,7 +130,6 @@ var chunks = [];
 
 function addChunk(data){
 	chunks.push(data);
-	//console.log("pushed chunk");
 	if (!pauseInd){
 		play();
 	}
@@ -178,8 +175,6 @@ function step(timestamp) {
 			y = parseInt(chunks[chunkCounter].substring(chunkIndex + 3, chunkIndex + 6), 16);
 			color = "#" + chunks[chunkCounter].substring(chunkIndex + 6, chunkIndex + 12);
 			context.fillStyle = color;
-			//console.log("Adding " + x + " " + y + " " + color);
-			//console.log("adding pixel");
 			context.fillRect(x, y, 1, 1);
 			if (pixelsThisFrame >= ppf){
 				break outerLoop;
@@ -187,7 +182,6 @@ function step(timestamp) {
 		}
 		chunkIndex = 0;
 	}
-	//console.log(gotWholeImage + " " + (chunkCounter == chunks.length));
 	if (gotWholeImage &&
 		chunkCounter == chunks.length){
 		doneRendering = true;
