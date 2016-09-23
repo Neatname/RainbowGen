@@ -55,11 +55,11 @@
 				<div class="modal-body">
 					<div class="dropdown">
 					  	<button id="imageTypeDropdown" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
-					  	Iterator <span class="caret"></span>
+					  	Stained Glass <span class="caret"></span>
 					  	</button>
 					  	<ul class="dropdown-menu">
+                     <li><a id="stainedDrop" href="#">Stained Glass</a></li>
 						 	<li><a id="iteratorDrop" href="#">Iterator</a></li>
-							<li><a id="stainedDrop" href="#">Stained Glass</a></li>
                      <li><a id="glassIteratorDrop" href="#">Glass Iterator</a></li>
 					  	</ul>
 					</div>
@@ -81,6 +81,10 @@
 									});
 								</script>
 								<button id="newIteratorButton" class="btn btn-primary newButton" onclick="newIterator()" data-dismiss="modal">Create</button>
+                        <p class="description">This algorithm works by keeping track of where it added
+                        pixels recently and tends to add pixels near other places it added to recently.
+                        The higher the snakiness factor, the more prone the algorithm is to staying where
+                        it is and adding there.</p>
 							</div>
 						</form>
 					</div>
@@ -102,6 +106,8 @@
 									});
 								</script>
 								<button id="newStainedButton" class="btn btn-primary newButton" onclick="newStained()" data-dismiss="modal">Create</button>
+                        <p class="description">This algorithm works by adding pixels randomly around the
+                        edge of what it has already added.</p>
 							</div>
 						</form>
 					</div>
@@ -151,6 +157,11 @@
                            });
                         </script>
                         <button id="newIteratorButton" class="btn btn-primary newButton" onclick="newGlassIterator()" data-dismiss="modal">Create</button>
+                        <p class="description">This algorithm works by switching between the Iterator and
+                        Stained Glass algorithms as it goes. The snakiness factor does the same thing it
+                        does in Iterator. The chances to switch to glass or iterator do just what they
+                        sound like: after placing a pixel in Stained Glass mode, there is a 1 in X chance
+                        that the algorithm will switch to Iterator mode and vice versa.</p>
                      </div>
                   </form>
                </div>

@@ -95,7 +95,7 @@ body {
    display: none;
 }
 
-#iteratorOptions {
+#stainedGlassOptions {
    display: inline;
 }
 
@@ -124,4 +124,10 @@ body {
 }
 #newModalContent{
    max-width: 300px;
+}
+.dropdown{
+   margin-bottom: 5px;
+}
+.description{
+   margin-top: 5px;
 }
