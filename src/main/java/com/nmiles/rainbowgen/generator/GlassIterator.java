@@ -139,19 +139,23 @@ public class GlassIterator extends RandomImage {
         
         for(;;){
             if (rightInd){
-                if (iteratorPos < lastIndex){
-                    iteratorPos++;
+                iteratorPos++;
+                if (iteratorPos <= lastIndex){
                     if (rand.nextInt(1000) < individualPercent){
-                        return edgeList.get(iteratorPos);
+                        if (iteratorPos >= 0){
+                            return edgeList.get(iteratorPos);
+                        }
                     }
                 } else {
                     rightInd = false;
                 }
             } else {
-                if (iteratorPos > 0){
-                    iteratorPos--;
+                iteratorPos--;
+                if (iteratorPos >= 0){
                     if (rand.nextInt(1000) < individualPercent){
-                        return edgeList.get(iteratorPos);
+                        if (iteratorPos <= lastIndex){
+                            return edgeList.get(iteratorPos);
+                        }
                     }
                 } else {
                     rightInd = true;
