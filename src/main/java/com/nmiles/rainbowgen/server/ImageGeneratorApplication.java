@@ -9,6 +9,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import com.nmiles.rainbowgen.generator.FastIterator;
+import com.nmiles.rainbowgen.generator.GlassIterator;
 import com.nmiles.rainbowgen.generator.ImageRecord;
 import com.nmiles.rainbowgen.generator.RandomImage;
 import com.nmiles.rainbowgen.generator.StainedGlass;
@@ -23,11 +24,6 @@ import com.nmiles.rainbowgen.generator.StainedGlass;
 public class ImageGeneratorApplication extends WebSocketApplication {
 	/** The max dimension that any image may have in the x or y direction. */
 	private static final int MAX_DIMENSIONS = 4096;
-	/**
-	 * The highest allowable percentage. Percentages are represented from 0-1000
-	 * to allow for more precision.
-	 */
-	private static final int MAX_PERCENT = 999;
 	/** A blank byte array for sending pings. */
 	private static final byte[] PING_DATA = {};
 
@@ -119,16 +115,17 @@ public class ImageGeneratorApplication extends WebSocketApplication {
 				switch (type) {
 					case "fastIterator":
 						int individualPercent = ((Long) obj.get("individualPercent")).intValue();
-						if (individualPercent < 0
-								|| individualPercent > MAX_PERCENT) {
-							throw new IllegalArgumentException("Invalid percent");
-						}
 						image = new FastIterator(width, height, individualPercent);
 						break;
 					case "stainedGlass":
 						int startingPoints = ((Long) obj.get("startingPoints")).intValue();
 						image = new StainedGlass(width, height, startingPoints);
 						break;
+					case "glassIterator":
+                        int switchToGlass = ((Long) obj.get("switchToGlass")).intValue();
+                        int switchToIterator = ((Long) obj.get("switchToIterator")).intValue();
+					    individualPercent = ((Long) obj.get("individualPercent")).intValue();
+					    image = new GlassIterator(width, height, switchToGlass, switchToIterator, individualPercent);
 				}
 
 				record = image.getRecord();

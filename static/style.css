@@ -108,7 +108,7 @@ body {
    margin-top: 5px;
 }
 .form-control {
-   width: 70px;
+   width: 100px;
 }
 #infoButton {
    float:left;
@@ -123,5 +123,5 @@ body {
    padding-top:5px;
 }
 #newModalContent{
-   max-width: 250px;
+   max-width: 300px;
 }

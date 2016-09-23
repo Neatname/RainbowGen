@@ -60,6 +60,7 @@
 					  	<ul class="dropdown-menu">
 						 	<li><a id="iteratorDrop" href="#">Iterator</a></li>
 							<li><a id="stainedDrop" href="#">Stained Glass</a></li>
+                     <li><a id="glassIteratorDrop" href="#">Glass Iterator</a></li>
 					  	</ul>
 					</div>
 					<div class="imageOptions" id="iteratorOptions">
@@ -104,6 +105,55 @@
 							</div>
 						</form>
 					</div>
+               <div class="imageOptions" id="glassIteratorOptions">
+                  <form>
+                     <div class="form-group">
+                        <label for="glassIteratorPercent">Snakiness factor (50 - 999):</label>
+                        <input type="number" class="form-control" id="glassIteratorPercent">
+                        <script>
+                           // set the initial value on load
+                           $("#glassIteratorPercent").val("500");
+                           $("#glassIteratorPercent").change(function(){
+                              var val = parseInt($("#glassIteratorPercent").val());
+                              if (val > 999){
+                                 $("#glassIteratorPercent").val("999");
+                              } else if (val < 1){
+                                 $("#glassIteratorPercent").val("1");
+                              }
+                           });
+                        </script>
+                        <label for="switchToGlass">Chance to switch to glass (1 in __ ):</label>
+                        <input type="number" class="form-control" id="switchToGlass">
+                        <script>
+                           // set the initial value on load
+                           $("#switchToGlass").val("500");
+                           $("#switchToGlass").change(function(){
+                              var val = parseInt($("#switchToGlass").val());
+                              if (val > 100000000){
+                                 $("#switchToGlass").val("100000000");
+                              } else if (val < 1){
+                                 $("#switchToGlass").val("1");
+                              }
+                           });
+                        </script>
+                        <label for="switchToIterator">Chance to switch to iterator (1 in __ ):</label>
+                        <input type="number" class="form-control" id="switchToIterator">
+                        <script>
+                           // set the initial value on load
+                           $("#switchToIterator").val("20000");
+                           $("#switchToIterator").change(function(){
+                              var val = parseInt($("#switchToIterator").val());
+                              if (val > 100000000){
+                                 $("#switchToIterator").val("100000000");
+                              } else if (val < 1){
+                                 $("#switchToIterator").val("1");
+                              }
+                           });
+                        </script>
+                        <button id="newIteratorButton" class="btn btn-primary newButton" onclick="newGlassIterator()" data-dismiss="modal">Create</button>
+                     </div>
+                  </form>
+               </div>
 				</div>
 			</div>
 		</div>
@@ -177,6 +227,13 @@
 			document.getElementById("stainedGlassOptions").style.display = "inline";
 		});
 	});
+
+   $("#glassIteratorDrop").click(function(){
+      hideAllOptions(function() {
+         document.getElementById("imageTypeDropdown").innerHTML = 'Glass Iterator <span class="caret"></span>';
+         document.getElementById("glassIteratorOptions").style.display = "inline";
+      });
+   });
 
 	function hideAllOptions(callback){
 		var toHide = document.getElementsByClassName("imageOptions");

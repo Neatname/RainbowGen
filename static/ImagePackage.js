@@ -61,7 +61,11 @@ function newIterator(){
 }
 
 function newStained(){
-	getImage("stainedGlass")
+	getImage("stainedGlass");
+}
+
+function newGlassIterator(){
+	getImage("glassIterator");
 }
 
 function connect(imageType){
@@ -91,6 +95,19 @@ function connect(imageType){
 					"width": width,
 					"height": height,
 					"startingPoints": startingPoints
+				}));
+				break;
+			case "glassIterator":
+				var giPercent = parseInt($("#glassIteratorPercent").val());
+				var switchToGlass = parseInt($("#switchToGlass").val());
+				var switchToIterator = parseInt($("#switchToIterator").val());
+				websocket.send(JSON.stringify({
+					"type": "glassIterator",
+					"width": width,
+					"height": height,
+					"switchToGlass": switchToGlass,
+					"switchToIterator": switchToIterator,
+					"individualPercent": giPercent
 				}));
 				break;
 		}
