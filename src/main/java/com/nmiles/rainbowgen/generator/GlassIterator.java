@@ -133,7 +133,15 @@ public class GlassIterator extends RandomImage {
         }
     }
     
-    
+    /**
+     * Execute this iteration in Iterator mode. The fundamental logic is
+     * identical to FastIterator's nextPixel() method except for the check for
+     * whether or not to switch to Glass mode. But while the fundamental logic
+     * is the same, there is a large implementational difference in that we are
+     * no longer using a ListIterator. We are instead simulating a ListIterator
+     * by maintaining an index that we increment or decrement as we step
+     * through the list.
+     */
     private void doIterator(){
         Pixel toAddTo = chooseByIterator();
         List<Pixel> nextPossibilities = toAddTo.getPossibilities(image);
@@ -146,6 +154,7 @@ public class GlassIterator extends RandomImage {
 
         List<Integer> colorPossibilities = colorTracker.getClosestColors(colorToMatch);
 
+        // keep populating pixels until the neighbor list or color list runs out
         while (nextPossibilities.size() != 0 && colorPossibilities.size() != 0) {
             Pixel pixelToAdd = nextPossibilities.remove(rand.nextInt(nextPossibilities.size()));
             int colorToAdd = colorPossibilities.remove(rand.nextInt(colorPossibilities.size()));
@@ -154,38 +163,55 @@ public class GlassIterator extends RandomImage {
             updateImage(pixelToAdd.getX(), pixelToAdd.getY(), colorToAdd);
         }
         
+        // determine whether or not to switch modes
         if (rand.nextInt(switchToGlass) == 0){
             inGlassMode = true;
         }
     }
 
-    
+    /**
+     * Does exactly what FastIterator's choosePixelFromList() method does, just
+     * with the simulated ListIterator paradigm
+     * @return The chosen Pixel
+     */
     private Pixel chooseByIterator(){
         // randomly choose right or left
         boolean rightInd = rand.nextInt(2) == 0;
         
+        // save the last index in the list so we don't have to keep calculating
         int lastIndex = edgeList.size() - 1;
         
+        // loop until we return
         for(;;){
+            // if we're going right
             if (rightInd){
                 iteratorPos++;
+                // if we aren't past the end
                 if (iteratorPos <= lastIndex){
+                    // if we're stopping here
                     if (rand.nextInt(1000) < individualPercent){
+                        // make sure we aren't in the negatives before sending
                         if (iteratorPos >= 0){
                             return edgeList.get(iteratorPos);
                         }
                     }
+                // this is the last element, turn around
                 } else {
                     rightInd = false;
                 }
+            // we're going left
             } else {
                 iteratorPos--;
+                // if we aren't past the beginning
                 if (iteratorPos >= 0){
+                    // if we're stopping here
                     if (rand.nextInt(1000) < individualPercent){
+                        // make sure we aren't past the end of the list
                         if (iteratorPos <= lastIndex){
                             return edgeList.get(iteratorPos);
                         }
                     }
+                // we're at the end, turn around
                 } else {
                     rightInd = true;
                 }

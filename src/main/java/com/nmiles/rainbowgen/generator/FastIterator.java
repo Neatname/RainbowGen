@@ -85,6 +85,7 @@ public class FastIterator extends RandomImage {
 
         List<Integer> colorPossibilities = colorTracker.getClosestColors(colorToMatch);
 
+        // keep populating pixels until the neighbor list or color list runs out
         while (nextPossibilities.size() != 0 && colorPossibilities.size() != 0) {
             Pixel pixelToAdd = nextPossibilities.remove(rand.nextInt(nextPossibilities.size()));
             int colorToAdd = colorPossibilities.remove(rand.nextInt(colorPossibilities.size()));
@@ -129,7 +130,7 @@ public class FastIterator extends RandomImage {
                     // and go back
                     rightInd = false;
                 }
-                // we're going left
+            // we're going left
             } else {
                 // if this isn't the first element in the list
                 if (edgeIterator.hasPrevious()) {
