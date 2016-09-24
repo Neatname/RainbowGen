@@ -104,7 +104,7 @@ public class FastIterator extends RandomImage {
      * percent chance to stop and return the current item. This percent chance
      * is on a scale of 1-1000 and is stored in the individualPercent field.
      * 
-     * @return
+     * @return The chosen Pixel
      */
     private Pixel choosePixelFromList() {
         // randomly choose right or left

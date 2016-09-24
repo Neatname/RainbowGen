@@ -3,22 +3,50 @@ package com.nmiles.rainbowgen.generator;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This algorithm is just a combination of StainedGlass and FastIterator. It
+ * works by having a certain chance each iteration to switch between the
+ * algorithms.
+ * @author Nathan Miles
+ *
+ */
 public class GlassIterator extends RandomImage {
-    
+    /**
+     * In Iterator mode, the percent chance that the iterator will stop at a
+     * given pixel in the edgeList. Percentages are on a scale of 1 - 1000.
+     */
     private int individualPercent;
-    
+    /** In Iterator mode, the chance at each iteration to switch to
+     * Glass mode. Expressed as 1 in [switchToGlass]. */
     private int switchToGlass;
-    
+    /** In Glass mode, the chance at each iteration to switch to Iterator
+     * mode. Expressed as 1 in [switchToIterator]. */
     private int switchToIterator;
-    
+    /** A list of all pixels on the edge of the image, just as in StainedGlass. */
     private List<Pixel> edgeList;
-    
+    /** An indicator of whether or not the algorithm is currently in Glass mode. */
     private boolean inGlassMode = true;
-    
+    /** Keeps track of the simulated iterator's position when in Iterator mode. */
     private int iteratorPos;
     
+    /**
+     * Constructs a new GlassIterator
+     * 
+     * @param width
+     *              The width of the image
+     * @param height
+     *              The height of the image
+     * @param switchToGlass
+     *              In Iterator mode, the chance at each iteration to switch to
+     *              Glass mode. Expressed as 1 in [switchToGlass].
+     * @param switchToIterator
+     *              In Glass mode, the chance at each iteration to switch to
+     *              Iterator mode. Expressed as 1 in [switchToIterator].
+     * @param individualPercent
+     */
     public GlassIterator(int width, int height, int switchToGlass, int switchToIterator, int individualPercent){
         super(width, height);
+        // bounds checking on new params
         if (individualPercent <= 0 || individualPercent > 1000 ||
             switchToGlass <= 0 || switchToIterator <= 0){
             throw new IllegalArgumentException();
@@ -41,9 +69,12 @@ public class GlassIterator extends RandomImage {
         return edgeList.isEmpty();
     }
 
+    /**
+     * Populates the next pixel or pixels for this iteration. It first
+     * determines which mode we're in, then executes in the appropriate mode.
+     */
     @Override
     public void nextPixel() {
-        // do the appropriate mode
         if (inGlassMode){
             doGlass();
         } else {
@@ -51,7 +82,14 @@ public class GlassIterator extends RandomImage {
         }
     }
     
-    
+    /**
+     * Executes this iteration in Glass mode. This method is almost identical
+     * to StainedGlass's nextPixel() method. The only changes are: now when
+     * Pixels are added to the edgeList, they are now added immediately after
+     * the pixel that was chosen from the edgeList rather than at the end; and
+     * after executing this iteration, the choice of whether or not to switch
+     * to Iterator mode is made.
+     */
     private void doGlass(){
         // pick a random index in the list
         int indexToGet = rand.nextInt(edgeList.size());
@@ -74,7 +112,11 @@ public class GlassIterator extends RandomImage {
             int newColor = closestColors.remove(rand.nextInt(closestColors.size()));
             // add it to the image
             updateImage(newPixel.getX(), newPixel.getY(), newColor);
-            // add it to the edgeList
+            
+            /* Add it to the edgeList right after the pixel that was chosen
+             * earlier. This is done so that close-together pixels are close
+             * together when we switch to Iterator mode.
+             */
             edgeList.add(indexToGet + 1, newPixel);
         }
         // if all of the initial pixel's neighbors are now populated, remove it
@@ -83,24 +125,11 @@ public class GlassIterator extends RandomImage {
             edgeList.remove(indexToGet);
         }
         
+        // determine whether to switch to Iterator mode
         if (rand.nextInt(switchToIterator) == 0){
             inGlassMode = false;
             // set a random iterator position
             iteratorPos = rand.nextInt(edgeList.size());
-        }
-
-
-        // determine if we need to switch modes
-        if (inGlassMode){
-            if (rand.nextInt(switchToIterator) == 0){
-                inGlassMode = false;
-                // set a random iterator position
-                iteratorPos = rand.nextInt(edgeList.size());
-            }
-        } else {
-            if (rand.nextInt(switchToGlass) == 0){
-                inGlassMode = true;
-            }
         }
     }
     
